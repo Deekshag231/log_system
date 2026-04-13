@@ -1,0 +1,8 @@
+/target/
+/.m2-local/
+/.idea/
+*.iml
+.classpath
+.project
+.settings/
+.DS_Store

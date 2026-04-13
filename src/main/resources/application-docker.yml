@@ -1,0 +1,10 @@
+spring:
+  kafka:
+    bootstrap-servers: kafka:29092
+  elasticsearch:
+    uris: http://elasticsearch:9200
+
+logmonitor:
+  kafka:
+    topic:
+      logs: logs.raw
