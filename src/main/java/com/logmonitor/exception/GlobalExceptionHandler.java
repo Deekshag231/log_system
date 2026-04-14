@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,6 +30,26 @@ public class GlobalExceptionHandler {
         body.setMessage("One or more fields are invalid");
         body.setDetails(details);
         log.debug("Validation error: {}", details);
+        return ResponseEntity.badRequest().body(body);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiErrorResponse> handleBadCredentials(BadCredentialsException ex) {
+        ApiErrorResponse body = new ApiErrorResponse();
+        body.setStatus(HttpStatus.UNAUTHORIZED.value());
+        body.setError("Unauthorized");
+        body.setMessage("Invalid username or password");
+        log.debug("Authentication failed");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiErrorResponse> handleUnreadableBody(HttpMessageNotReadableException ex) {
+        ApiErrorResponse body = new ApiErrorResponse();
+        body.setStatus(HttpStatus.BAD_REQUEST.value());
+        body.setError("Invalid request body");
+        body.setMessage("Malformed JSON or incompatible request payload");
+        log.debug("Unreadable request body: {}", ex.getMessage());
         return ResponseEntity.badRequest().body(body);
     }
 

@@ -43,6 +43,15 @@ logmonitor:
   temp-store:
     max-entries: 2000
 
+security:
+  auth:
+    username: ${APP_AUTH_USERNAME:admin}
+    password: ${APP_AUTH_PASSWORD:admin123}
+  jwt:
+    issuer: ${JWT_ISSUER:log-monitor}
+    expiration-seconds: ${JWT_EXPIRATION_SECONDS:3600}
+    secret: ${JWT_SECRET:log-monitor-super-secret-key-please-change-in-production-32bytes-min}
+
 logging:
   level:
     root: INFO

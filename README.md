@@ -20,6 +20,29 @@ Wait until Elasticsearch and Kafka are healthy, then:
 - Kibana: `http://localhost:5601`
 - Elasticsearch: `http://localhost:9200`
 
+## Authentication (JWT)
+
+Protected APIs now require a Bearer token.
+
+Default credentials (override with env vars `APP_AUTH_USERNAME`, `APP_AUTH_PASSWORD`):
+
+- username: `admin`
+- password: `admin123`
+
+Login and copy token:
+
+```bash
+curl -s -X POST http://localhost:8080/api/v1/auth/login ^
+  -H "Content-Type: application/json" ^
+  -d "{\"username\":\"admin\",\"password\":\"admin123\"}"
+```
+
+Use token (replace `<TOKEN>`):
+
+```bash
+curl -H "Authorization: Bearer <TOKEN>" "http://localhost:8080/api/v1/logs/recent?limit=20"
+```
+
 ### Kibana (quick)
 
 1. Open Kibana → **Management** → **Stack Management** → **Data Views** → **Create data view**.
@@ -42,33 +65,34 @@ Defaults: Kafka `localhost:9092`, Elasticsearch `http://localhost:9200`.
 
 ## API examples
 
-**Ingest (ERROR → Kafka + ES + alert pipeline):**
+**Ingest (ERROR → Kafka + ES + alert pipeline, requires JWT):**
 
 ```bash
 curl -s -X POST http://localhost:8080/api/v1/logs ^
+  -H "Authorization: Bearer <TOKEN>" ^
   -H "Content-Type: application/json" ^
   -d "{\"timestamp\":\"2026-04-12T10:01:23\",\"level\":\"ERROR\",\"service\":\"payment-service\",\"message\":\"Payment failed\"}"
 ```
 
-**Search (Elasticsearch-backed):**
+**Search (Elasticsearch-backed, requires JWT):**
 
 ```bash
-curl "http://localhost:8080/api/v1/logs/search/level?level=ERROR&size=10"
-curl "http://localhost:8080/api/v1/logs/search/service?name=payment-service&size=10"
-curl "http://localhost:8080/api/v1/logs/search/message?q=failed&size=10"
-curl "http://localhost:8080/api/v1/logs/search/range?from=2026-04-12T00:00:00Z&to=2026-04-13T00:00:00Z&size=50"
+curl -H "Authorization: Bearer <TOKEN>" "http://localhost:8080/api/v1/logs/search/level?level=ERROR&size=10"
+curl -H "Authorization: Bearer <TOKEN>" "http://localhost:8080/api/v1/logs/search/service?name=payment-service&size=10"
+curl -H "Authorization: Bearer <TOKEN>" "http://localhost:8080/api/v1/logs/search/message?q=failed&size=10"
+curl -H "Authorization: Bearer <TOKEN>" "http://localhost:8080/api/v1/logs/search/range?from=2026-04-12T00:00:00Z&to=2026-04-13T00:00:00Z&size=50"
 ```
 
-**Recent in-memory buffer (all accepted levels):**
+**Recent in-memory buffer (all accepted levels, requires JWT):**
 
 ```bash
-curl "http://localhost:8080/api/v1/logs/recent?limit=20"
+curl -H "Authorization: Bearer <TOKEN>" "http://localhost:8080/api/v1/logs/recent?limit=20"
 ```
 
-**Active alerts:**
+**Active alerts (requires JWT):**
 
 ```bash
-curl http://localhost:8080/api/v1/alerts/active
+curl -H "Authorization: Bearer <TOKEN>" http://localhost:8080/api/v1/alerts/active
 ```
 
 ## Configuration
