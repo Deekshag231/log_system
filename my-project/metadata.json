@@ -1,0 +1,6 @@
+{
+  "name": "Log Monitor",
+  "description": "A comprehensive log monitoring and management dashboard with real-time insights, ingestion, and alerting.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
