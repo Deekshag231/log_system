@@ -1,17 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
 import { logApi } from '@/lib/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer, 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
   Cell,
   PieChart,
-  Pie
+  Pie,
 } from 'recharts';
 import { AlertTriangle, FileText, ShieldAlert, Info, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -24,17 +24,24 @@ const COLORS = {
 };
 
 export default function DashboardPage() {
-  const { data: recentLogs, isLoading: logsLoading } = useQuery({
-    queryKey: ['recentLogs'],
-    queryFn: () => logApi.getRecentLogs(100),
+  const { data, isLoading } = useQuery({
+    queryKey: ['dashboardOverview'],
+    queryFn: async () => {
+      const [serviceInfo, recentLogs, activeAlerts] = await Promise.all([
+        logApi.getServiceInfo(),
+        logApi.getRecentLogs(100),
+        logApi.getActiveAlerts(),
+      ]);
+
+      return {
+        serviceInfo,
+        recentLogs,
+        activeAlerts,
+      };
+    },
   });
 
-  const { data: activeAlerts, isLoading: alertsLoading } = useQuery({
-    queryKey: ['activeAlerts'],
-    queryFn: logApi.getActiveAlerts,
-  });
-
-  if (logsLoading || alertsLoading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -42,46 +49,49 @@ export default function DashboardPage() {
     );
   }
 
-  const errorCount = recentLogs?.filter(l => l.level === 'ERROR').length || 0;
-  const warnCount = recentLogs?.filter(l => l.level === 'WARN').length || 0;
-  const infoCount = recentLogs?.filter(l => l.level === 'INFO').length || 0;
-  const debugCount = recentLogs?.filter(l => l.level === 'DEBUG').length || 0;
+  const recentLogs = data?.recentLogs || [];
+  const activeAlerts = data?.activeAlerts || [];
+
+  const errorCount = recentLogs.filter((l) => l.level === 'ERROR').length;
+  const warnCount = recentLogs.filter((l) => l.level === 'WARN').length;
+  const infoCount = recentLogs.filter((l) => l.level === 'INFO').length;
+  const debugCount = recentLogs.filter((l) => l.level === 'DEBUG').length;
 
   const distributionData = [
     { name: 'ERROR', value: errorCount, color: COLORS.ERROR },
     { name: 'WARN', value: warnCount, color: COLORS.WARN },
     { name: 'INFO', value: infoCount, color: COLORS.INFO },
     { name: 'DEBUG', value: debugCount, color: COLORS.DEBUG },
-  ].filter(d => d.value > 0);
+  ].filter((d) => d.value > 0);
 
   const stats = [
-    { 
-      label: 'Recent Logs', 
-      value: recentLogs?.length || 0, 
-      icon: FileText, 
+    {
+      label: 'Recent Logs',
+      value: recentLogs.length,
+      icon: FileText,
       color: 'text-blue-500',
-      bg: 'bg-blue-500/10'
+      bg: 'bg-blue-500/10',
     },
-    { 
-      label: 'Errors', 
-      value: errorCount, 
-      icon: ShieldAlert, 
+    {
+      label: 'Errors',
+      value: errorCount,
+      icon: ShieldAlert,
       color: 'text-red-500',
-      bg: 'bg-red-500/10'
+      bg: 'bg-red-500/10',
     },
-    { 
-      label: 'Warnings', 
-      value: warnCount, 
-      icon: AlertTriangle, 
+    {
+      label: 'Warnings',
+      value: warnCount,
+      icon: AlertTriangle,
       color: 'text-amber-500',
-      bg: 'bg-amber-500/10'
+      bg: 'bg-amber-500/10',
     },
-    { 
-      label: 'Active Alerts', 
-      value: activeAlerts?.length || 0, 
-      icon: Info, 
+    {
+      label: 'Active Alerts',
+      value: activeAlerts.length,
+      icon: Info,
       color: 'text-purple-500',
-      bg: 'bg-purple-500/10'
+      bg: 'bg-purple-500/10',
     },
   ];
 
@@ -114,7 +124,7 @@ export default function DashboardPage() {
                 <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.1} />
                 <XAxis dataKey="name" />
                 <YAxis />
-                <Tooltip 
+                <Tooltip
                   contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}
                   itemStyle={{ color: 'hsl(var(--foreground))' }}
                 />
@@ -169,15 +179,17 @@ export default function DashboardPage() {
           <CardTitle>Active Alerts Summary</CardTitle>
         </CardHeader>
         <CardContent>
-          {activeAlerts && activeAlerts.length > 0 ? (
+          {activeAlerts.length > 0 ? (
             <div className="space-y-4">
               {activeAlerts.slice(0, 5).map((alert) => (
                 <div key={alert.id} className="flex items-center justify-between p-4 border rounded-lg bg-muted/30">
                   <div className="flex items-center gap-3">
-                    <div className={cn(
-                      "w-2 h-2 rounded-full",
-                      alert.severity === 'CRITICAL' ? "bg-red-500" : "bg-amber-500"
-                    )} />
+                    <div
+                      className={cn(
+                        'w-2 h-2 rounded-full',
+                        alert.severity === 'CRITICAL' ? 'bg-red-500' : 'bg-amber-500'
+                      )}
+                    />
                     <div>
                       <p className="font-medium">{alert.title}</p>
                       <p className="text-sm text-muted-foreground">{alert.detail}</p>
@@ -190,9 +202,7 @@ export default function DashboardPage() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              No active alerts detected. System is healthy.
-            </div>
+            <div className="text-center py-8 text-muted-foreground">No active alerts detected. System is healthy.</div>
           )}
         </CardContent>
       </Card>

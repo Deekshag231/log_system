@@ -64,7 +64,7 @@ export default function Layout() {
           <div className="flex items-center justify-between h-16 px-4 border-bottom">
             <Link to="/" className="flex items-center gap-2 font-bold text-xl">
               <Terminal className="w-8 h-8 text-primary" />
-              {(isSidebarOpen || !isSidebarOpen) && <span className={cn("transition-opacity", !isSidebarOpen && "lg:hidden")}>LogMonitor</span>}
+              {(isSidebarOpen || !isSidebarOpen) && <span className={cn("transition-opacity", !isSidebarOpen && "lg:hidden")}>Log Monitor</span>}
             </Link>
             <Button 
               variant="ghost" 

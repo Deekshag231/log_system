@@ -1,6 +1,7 @@
 package com.logmonitor.service;
 
 import com.logmonitor.model.AlertRecord;
+import com.logmonitor.repository.WarningRecordRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,17 +11,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 class AlertServiceTest {
 
     private CapturingNotificationService notificationService;
     private AlertService alertService;
+    private WarningRecordRepository warningRecordRepository;
 
     @BeforeEach
     void setUp() {
         notificationService = new CapturingNotificationService();
+        warningRecordRepository = mock(WarningRecordRepository.class);
         SlidingWindowErrorTracker tracker = new SlidingWindowErrorTracker(3, Duration.ofSeconds(60));
-        alertService = new AlertService(tracker, notificationService);
+        alertService = new AlertService(tracker, notificationService, warningRecordRepository);
     }
 
     @Test

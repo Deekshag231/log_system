@@ -60,10 +60,59 @@ export interface AuthRegisterResponse {
   message: string;
 }
 
+export interface MongoLogRecord {
+  id: string;
+  eventId: string;
+  timestamp: string;
+  level: string;
+  serviceName: string;
+  message: string;
+}
+
+export interface WarningRecord {
+  id: string;
+  warningMessage: string;
+  severity: string;
+  timestamp: string;
+}
+
+export interface UserAccountSummary {
+  id: string;
+  username: string;
+  email: string;
+  name: string;
+  role: string;
+  createdAt: string;
+}
+
+export interface ForgotPasswordRecord {
+  id: string;
+  email: string;
+  otp: string;
+  otpExpiry: string;
+}
+
+export interface ResetPasswordRecord {
+  id: string;
+  email: string;
+  newPassword: string;
+  confirmPassword: string;
+  otp: string;
+}
+
 export interface DashboardStats {
   recentLogsCount: number;
   errorCount: number;
   warnCount: number;
   activeAlertsCount: number;
   levelDistribution: { name: string; value: number }[];
+}
+
+export interface ServiceInfo {
+  service: string;
+  bootId: string;
+  status: string;
+  apiBase: string;
+  endpoints: Record<string, string>;
+  kibana: string;
 }

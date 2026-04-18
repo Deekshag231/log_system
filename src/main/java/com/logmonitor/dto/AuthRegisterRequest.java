@@ -13,6 +13,15 @@ public class AuthRegisterRequest {
     @Size(min = 6, max = 128, message = "password must be between 6 and 128 characters")
     private String password;
 
+    @Size(max = 128, message = "email must be at most 128 characters")
+    private String email;
+
+    @Size(max = 128, message = "name must be at most 128 characters")
+    private String name;
+
+    @Size(max = 32, message = "role must be at most 32 characters")
+    private String role;
+
     public String getUsername() {
         return username;
     }
@@ -27,5 +36,29 @@ public class AuthRegisterRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

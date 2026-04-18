@@ -4,16 +4,10 @@ server:
 spring:
   application:
     name: log-monitor
-  datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://mysql:3306/logmonitor?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ${SPRING_DATASOURCE_USERNAME:logmonitor}
-    password: ${SPRING_DATASOURCE_PASSWORD:changeit}
-  jpa:
-    hibernate:
-      ddl-auto: update
-    database-platform: ${SPRING_JPA_DATABASE_PLATFORM:org.hibernate.dialect.MySQL8Dialect}
-    show-sql: false
+  data:
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/}
+      database: ${SPRING_DATA_MONGODB_DATABASE:test}
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     producer:

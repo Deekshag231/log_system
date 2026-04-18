@@ -47,7 +47,12 @@ public class AuthController {
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AuthRegisterResponse> register(@Valid @RequestBody AuthRegisterRequest request) {
-        appUserDetailsService.register(request.getUsername(), request.getPassword());
+        appUserDetailsService.register(
+                request.getUsername(),
+                request.getEmail(),
+                request.getName(),
+                request.getPassword(),
+                request.getRole());
         return ResponseEntity.status(HttpStatus.CREATED).body(AuthRegisterResponse.created(request.getUsername()));
     }
 }

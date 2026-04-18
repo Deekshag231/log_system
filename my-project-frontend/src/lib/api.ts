@@ -7,6 +7,11 @@ import {
   AlertRecord,
   AuthTokenResponse,
   AuthRegisterResponse,
+  MongoLogRecord,
+  WarningRecord,
+  UserAccountSummary,
+  ForgotPasswordRecord,
+  ResetPasswordRecord,
 } from './types';
 
 const rawBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
@@ -99,6 +104,29 @@ export const logApi = {
   
   getActiveAlerts: async (): Promise<AlertRecord[]> => {
     const response = await api.get('/alerts/active');
+    return response.data;
+  },
+};
+
+export const mongoApi = {
+  getLogRecords: async (): Promise<MongoLogRecord[]> => {
+    const response = await api.get('/mongo/log-records');
+    return response.data;
+  },
+  getWarningRecords: async (): Promise<WarningRecord[]> => {
+    const response = await api.get('/mongo/warning-records');
+    return response.data;
+  },
+  getUsers: async (): Promise<UserAccountSummary[]> => {
+    const response = await api.get('/mongo/users');
+    return response.data;
+  },
+  getForgotPasswordRecords: async (): Promise<ForgotPasswordRecord[]> => {
+    const response = await api.get('/mongo/forgot-password-records');
+    return response.data;
+  },
+  getResetPasswordRecords: async (): Promise<ResetPasswordRecord[]> => {
+    const response = await api.get('/mongo/reset-password-records');
     return response.data;
   },
 };

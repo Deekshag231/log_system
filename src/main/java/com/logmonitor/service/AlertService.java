@@ -1,8 +1,5 @@
 package com.logmonitor.service;
 
-import com.logmonitor.model.AlertRecord;
-import org.springframework.stereotype.Service;
-
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -12,16 +9,27 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.springframework.stereotype.Service;
+
+import com.logmonitor.model.AlertRecord;
+import com.logmonitor.model.WarningRecord;
+import com.logmonitor.repository.WarningRecordRepository;
+
 @Service
 public class AlertService {
 
     private final SlidingWindowErrorTracker tracker;
     private final AlertNotificationService notificationService;
+    private final WarningRecordRepository warningRecordRepository;
     private final ConcurrentMap<UUID, AlertRecord> activeById = new ConcurrentHashMap<>();
 
-    public AlertService(SlidingWindowErrorTracker tracker, AlertNotificationService notificationService) {
+    public AlertService(
+            SlidingWindowErrorTracker tracker,
+            AlertNotificationService notificationService,
+            WarningRecordRepository warningRecordRepository) {
         this.tracker = tracker;
         this.notificationService = notificationService;
+        this.warningRecordRepository = warningRecordRepository;
     }
 
     /**
@@ -38,6 +46,11 @@ public class AlertService {
                     d,
                     true);
             activeById.put(alert.getId(), alert);
+            WarningRecord warningRecord = new WarningRecord();
+            warningRecord.setWarningMessage(d);
+            warningRecord.setSeverity("HIGH");
+            warningRecord.setTimestamp(alert.getTriggeredAt());
+            warningRecordRepository.save(warningRecord);
             notificationService.notifyChannels(alert);
         });
     }

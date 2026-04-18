@@ -21,7 +21,12 @@ public class HomeController {
                 "ingest", "POST /api/v1/logs",
                 "search", "GET /api/v1/logs/search/*",
                 "recent", "GET /api/v1/logs/recent",
-                "alerts", "GET /api/v1/alerts/active"
+                "alerts", "GET /api/v1/alerts/active",
+                "mongoLogs", "GET /api/v1/mongo/log-records",
+                "mongoWarnings", "GET /api/v1/mongo/warning-records",
+                "mongoUsers", "GET /api/v1/mongo/users",
+                "mongoForgotPassword", "GET /api/v1/mongo/forgot-password-records",
+                "mongoResetPassword", "GET /api/v1/mongo/reset-password-records"
         ));
         body.put("kibana", "http://localhost:5601");
         return ResponseEntity.ok(body);

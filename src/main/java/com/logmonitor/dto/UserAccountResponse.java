@@ -1,46 +1,25 @@
-package com.logmonitor.security;
+package com.logmonitor.dto;
 
 import java.time.Instant;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
+public class UserAccountResponse {
 
-@Document(collection = "users")
-public class UserAccount {
-
-    @Id
     private String id;
-
-    @Indexed(unique = true)
     private String username;
-
-    @Indexed(unique = true)
     private String email;
-
     private String name;
-
-    private String password;
-
     private String role;
-
     private Instant createdAt;
 
-    public UserAccount() {
-    }
-
-    public UserAccount(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
-
-    public UserAccount(String username, String email, String name, String password, String role, Instant createdAt) {
-        this.username = username;
-        this.email = email;
-        this.name = name;
-        this.password = password;
-        this.role = role;
-        this.createdAt = createdAt;
+    public static UserAccountResponse from(com.logmonitor.security.UserAccount userAccount) {
+        UserAccountResponse response = new UserAccountResponse();
+        response.setId(userAccount.getId());
+        response.setUsername(userAccount.getUsername());
+        response.setEmail(userAccount.getEmail());
+        response.setName(userAccount.getName());
+        response.setRole(userAccount.getRole());
+        response.setCreatedAt(userAccount.getCreatedAt());
+        return response;
     }
 
     public String getId() {
@@ -73,14 +52,6 @@ public class UserAccount {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getRole() {

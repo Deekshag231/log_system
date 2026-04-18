@@ -1,6 +1,14 @@
 package com.logmonitor.security;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
 
-public interface UserAccountRepository extends JpaRepository<UserAccount, String> {
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface UserAccountRepository extends MongoRepository<UserAccount, String> {
+
+	Optional<UserAccount> findByUsername(String username);
+
+	Optional<UserAccount> findByEmail(String email);
+
+	Optional<UserAccount> findByUsernameOrEmail(String username, String email);
 }

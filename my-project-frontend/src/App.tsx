@@ -15,7 +15,7 @@ const queryClient = new QueryClient({
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="dark" storageKey="log-monitor-theme">
+      <ThemeProvider defaultTheme="system" storageKey="log-monitor-theme">
         <Router />
         <Toaster position="top-right" richColors />
       </ThemeProvider>
